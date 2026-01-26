@@ -40,7 +40,32 @@ class LinkedListProblemsEasy {
 
     /**
      * 1. Reverse Linked List
-     * Logic: Prev, Curr, Next.
+     *
+     * PROBLEM:
+     * Given the head of a singly linked list, reverse the list, and return the reversed list.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4,5] -> Output: [5,4,3,2,1]
+     * Input: head = [] -> Output: []
+     *
+     * DESIGN:
+     * Why 3-Pointer Iteration?
+     * - We need to reverse the `next` pointer of every node.
+     * - To do this without losing the rest of the list, we need `prev`, `curr`, and `next`.
+     * - `curr.next = prev` breaks the link to `next`, so we must save `next` first.
+     *
+     * DETAIL:
+     * 1. Initialize `prev = null` and `curr = head`.
+     * 2. Loop while `curr != null`:
+     *    - Save `next = curr.next`.
+     *    - Reverse link: `curr.next = prev`.
+     *    - Move `prev` to `curr`.
+     *    - Move `curr` to `next`.
+     * 3. Return `prev` (new head).
+     *
+     * COMPLEXITY:
+     * Time: O(N) - Visit every node once.
+     * Space: O(1) - Only pointers used.
      */
     @Test
     fun q1_reverseList() {
@@ -59,7 +84,31 @@ class LinkedListProblemsEasy {
 
     /**
      * 2. Middle of the Linked List
-     * Logic: Slow (1x), Fast (2x).
+     *
+     * PROBLEM:
+     * Given the head of a singly linked list, return the middle node of the linked list.
+     * If there are two middle nodes, return the second middle node.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4,5] -> Output: [3,4,5] (Node with val 3)
+     * Input: head = [1,2,3,4,5,6] -> Output: [4,5,6] (Node with val 4)
+     *
+     * DESIGN:
+     * Why Fast and Slow Pointers (Tortoise and Hare)?
+     * - We want to find the middle in one pass.
+     * - `slow` moves 1 step, `fast` moves 2 steps.
+     * - When `fast` reaches the end, `slow` will be at the middle.
+     *
+     * DETAIL:
+     * 1. Initialize `slow = head`, `fast = head`.
+     * 2. Loop while `fast != null` and `fast.next != null`:
+     *    - `slow` moves 1 step.
+     *    - `fast` moves 2 steps.
+     * 3. Return `slow`.
+     *
+     * COMPLEXITY:
+     * Time: O(N) - One pass.
+     * Space: O(1)
      */
     @Test
     fun q2_middleNode() {
@@ -75,7 +124,33 @@ class LinkedListProblemsEasy {
 
     /**
      * 3. Merge Two Sorted Lists
-     * Logic: Dummy Head + Runner pointers.
+     *
+     * PROBLEM:
+     * You are given the heads of two sorted linked lists `list1` and `list2`.
+     * Merge the two lists in a one sorted list. The list should be made by splicing together the nodes of the first two lists.
+     *
+     * INPUT/OUTPUT:
+     * Input: l1 = [1,2,4], l2 = [1,3,4] -> Output: [1,1,2,3,4,4]
+     *
+     * DESIGN:
+     * Why Dummy Head?
+     * - We need to build a new list (or reuse nodes). The head of the new list is unknown initially (could be l1 head or l2 head).
+     * - A `dummy` node simplifies edge cases. The result is `dummy.next`.
+     * - `tail` pointer tracks the end of the merged list.
+     *
+     * DETAIL:
+     * 1. Create `dummy`. `tail = dummy`.
+     * 2. Loop while both `l1` and `l2` are not null:
+     *    - Compare values.
+     *    - Append smaller node to `tail.next`.
+     *    - Advance pointer of that list.
+     *    - Advance `tail`.
+     * 3. Append remaining non-null list to `tail.next`.
+     * 4. Return `dummy.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N + M)
+     * Space: O(1) - In-place merge.
      */
     @Test
     fun q3_mergeLists() {
@@ -95,7 +170,31 @@ class LinkedListProblemsEasy {
 
     /**
      * 4. Linked List Cycle
-     * Logic: Floyd's Cycle Detection (Fast/Slow).
+     *
+     * PROBLEM:
+     * Given `head`, the head of a linked list, determine if the linked list has a cycle in it.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [3,2,0,-4], pos = 1 -> Output: true
+     *
+     * DESIGN:
+     * Why Floyd's Cycle Detection?
+     * - Using a Set takes O(N) memory.
+     * - Fast/Slow pointers take O(1) memory.
+     * - If there is a cycle, `fast` (moving 2x) will eventually lap `slow` (moving 1x) and they will meet.
+     * - If `fast` reaches null, there is no cycle.
+     *
+     * DETAIL:
+     * 1. `slow = head`, `fast = head`.
+     * 2. Loop while `fast` and `fast.next` are not null:
+     *    - `slow = slow.next`.
+     *    - `fast = fast.next.next`.
+     *    - If `slow == fast`, return true.
+     * 3. Return false (loop ended).
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q4_hasCycle() {
@@ -120,7 +219,33 @@ class LinkedListProblemsEasy {
 
     /**
      * 5. Remove Duplicates from Sorted List
-     * Logic: If curr.val == curr.next.val, skip next.
+     *
+     * PROBLEM:
+     * Given the head of a sorted linked list, delete all duplicates such that each element appears only once. Return the linked list sorted as well.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,1,2] -> Output: [1,2]
+     * Input: head = [1,1,2,3,3] -> Output: [1,2,3]
+     *
+     * DESIGN:
+     * Why Pairwise Comparison?
+     * - Since the list is sorted, duplicates are adjacent.
+     * - Compare `curr.val` with `curr.next.val`.
+     * - If equal, bypass `curr.next` (`curr.next = curr.next.next`).
+     * - Else, move `curr`.
+     *
+     * DETAIL:
+     * 1. `curr = head`.
+     * 2. Loop while `curr` and `curr.next` not null:
+     *    - If `curr.val == curr.next.val`:
+     *      - `curr.next = curr.next.next` (Delete next).
+     *      - Do NOT move `curr` yet (need to check new `next`).
+     *    - Else:
+     *      - `curr = curr.next` (Move forward).
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q5_deleteDuplicates() {
@@ -136,7 +261,27 @@ class LinkedListProblemsEasy {
 
     /**
      * 6. Delete Node in a Linked List
-     * Logic: Copy next val to curr, delete next. (Given access to node only).
+     *
+     * PROBLEM:
+     * There is a singly-linked list `head` and we want to delete a node `node` in it.
+     * You are given the node to be deleted. You will not be given access to the head of the list.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [4,5,1,9], node = 5 -> Output: [4,1,9]
+     *
+     * DESIGN:
+     * Why Copy Value?
+     * - We cannot reach the previous node to change its next pointer.
+     * - Instead, we simulate deletion by copying the *next* node's value into the *current* node.
+     * - Then we delete the *next* node.
+     *
+     * DETAIL:
+     * 1. `node.val = node.next.val` (Copy value).
+     * 2. `node.next = node.next.next` (Delete next node).
+     *
+     * COMPLEXITY:
+     * Time: O(1)
+     * Space: O(1)
      */
     @Test
     fun q6_deleteNode() {
@@ -151,7 +296,29 @@ class LinkedListProblemsEasy {
 
     /**
      * 7. Intersection of Two Linked Lists
-     * Logic: A+B = B+A. Switch heads definition.
+     *
+     * PROBLEM:
+     * Given the heads of two singly linked-lists `headA` and `headB`, return the node at which the two lists intersect. If the two linked lists have no intersection at all, return null.
+     *
+     * INPUT/OUTPUT:
+     * Input: intersectVal = 8, listA = [4,1,8,4,5], listB = [5,6,1,8,4,5] -> Output: Node 8
+     *
+     * DESIGN:
+     * Why Two Pointers Switching Paths?
+     * - We don't know the lengths difference.
+     * - If pA travels `A + B` and pB travels `B + A`, they cover the same total distance.
+     * - They will meet at the intersection point (or at null).
+     *
+     * DETAIL:
+     * 1. `pA = headA`, `pB = headB`.
+     * 2. Loop while `pA != pB`:
+     *    - `pA = if (pA == null) headB else pA.next`.
+     *    - `pB = if (pB == null) headA else pB.next`.
+     * 3. Return `pA`.
+     *
+     * COMPLEXITY:
+     * Time: O(M + N)
+     * Space: O(1)
      */
     @Test
     fun q7_intersection() {
@@ -162,7 +329,32 @@ class LinkedListProblemsEasy {
 
     /**
      * 8. Palindrome Linked List
-     * Logic: Find Middle -> Reverse 2nd Half -> Compare.
+     *
+     * PROBLEM:
+     * Given the head of a singly linked list, return true if it is a palindrome.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,2,1] -> Output: true
+     * Input: head = [1,2] -> Output: false
+     *
+     * DESIGN:
+     * Why Reverse Half?
+     * - O(N) space using stack/array is trivial.
+     * - To do it O(1) space, we reverse the second half of the list.
+     * - Find Middle -> Reverse Second Half -> Compare Pointers from Start and Middle.
+     *
+     * DETAIL:
+     * 1. Find middle using Slow/Fast pointers.
+     * 2. Reverse list starting from `slow`.
+     * 3. Set `left = head`, `right = prev` (new head of reversed part).
+     * 4. Loop while `right != null`:
+     *    - If vals differ, return false.
+     *    - Advance pointers.
+     * 5. Return true.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q8_isPalindrome() {
@@ -187,7 +379,29 @@ class LinkedListProblemsEasy {
 
     /**
      * 9. Remove Linked List Elements
-     * Logic: Dummy Head. If next.val == target, skip.
+     *
+     * PROBLEM:
+     * Given the head of a linked list and an integer `val`, remove all the nodes of the linked list that has `Node.val == val`, and return the new head.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,6,3,4,5,6], val = 6 -> Output: [1,2,3,4,5]
+     *
+     * DESIGN:
+     * Why Dummy and Single Pointer?
+     * - The head itself might need to be removed. Dummy node handles this gracefully.
+     * - We check `curr.next`. If it matches, we bypass it.
+     *
+     * DETAIL:
+     * 1. Create `dummy`, `dummy.next = head`.
+     * 2. `curr = dummy`.
+     * 3. Loop while `curr.next != null`:
+     *    - If `curr.next.val == target`: `curr.next = curr.next.next` (Delete).
+     *    - Else: `curr = curr.next` (Advance).
+     * 4. Return `dummy.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q9_removeElements() {
@@ -203,8 +417,29 @@ class LinkedListProblemsEasy {
     }
 
     /**
-     * 10. Convert Binary Number in List to Integer
-     * Logic: res = res * 2 + val.
+     * 10. Convert Binary Number in a Linked List to Integer
+     *
+     * PROBLEM:
+     * Given `head` which is a reference node to a singly-linked list. The value of each node in the linked list is either 0 or 1. The linked list holds the binary representation of a number. Return the decimal value.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,0,1] -> Output: 5
+     *
+     * DESIGN:
+     * Why Bit Manipulation?
+     * - We traverse from MSB (Most Significant Bit) to LSB.
+     * - `res = res * 2 + val` (or `res << 1 | val`).
+     * - This accumulates the value optimally.
+     *
+     * DETAIL:
+     * 1. `res = 0`.
+     * 2. Loop `curr`:
+     *    - `res = (res << 1) | curr.val`.
+     * 3. Return `res`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q10_binaryToInt() {
@@ -221,27 +456,122 @@ class LinkedListProblemsEasy {
 
     /**
      * 11. Design HashSet
-     * Logic: Array of buckets (LinkedLists).
+     *
+     * PROBLEM:
+     * Design a HashSet without using any built-in hash table libraries.
+     * Implement `add(key)`, `remove(key)`, and `contains(key)`.
+     *
+     * INPUT/OUTPUT:
+     * add(1), add(2), contains(1) -> true, contains(3) -> false, remove(2), contains(2) -> false.
+     *
+     * DESIGN:
+     * Why Chaining with Linked List?
+     * - A hash set maps keys to buckets.
+     * - Collisions (keys mapping to same bucket) are handled by chaining nodes in a linked list.
+     * - `size = 1000` (prime or arbitrary). `h = key % size`.
+     *
+     * DETAIL:
+     * 1. Array of `ListNode?` (buckets).
+     * 2. `add`: Traverse bucket. If found, do nothing. Else, append.
+     * 3. `remove`: Traverse bucket. If found, remove node.
+     * 4. `contains`: Traverse. Return true if found.
+     *
+     * COMPLEXITY:
+     * Time: O(N/K) - Average O(1).
+     * Space: O(N + K) - N keys, K buckets.
      */
     @Test
     fun q11_designHashSet() {
         println("=== Q11: Design HashSet ===")
-        println("Logic: Array<ListNode?> size 1000. Hash = key % size. Chaining.")
+        val size = 100
+        val buckets = Array<ListNode?>(size) { null }
+        
+        fun hash(key: Int) = key % size
+        
+        fun add(key: Int) {
+            val h = hash(key)
+            var curr = buckets[h]
+            if (curr == null) { buckets[h] = ListNode(key); return }
+            if (curr.`val` == key) return
+            while (curr!!.next != null) {
+                if (curr.next!!.`val` == key) return
+                curr = curr.next
+            }
+            curr.next = ListNode(key)
+        }
+        
+        fun contains(key: Int): Boolean {
+            var curr = buckets[hash(key)]
+            while (curr != null) {
+                if (curr.`val` == key) return true
+                curr = curr.next
+            }
+            return false
+        }
+        
+        add(1); add(2)
+        println("Contains 1: ${contains(1)}")
+        println("Contains 3: ${contains(3)}")
     }
 
     /**
      * 12. Design HashMap
-     * Logic: Array of buckets (ListNode pairs).
+     *
+     * PROBLEM:
+     * Design a HashMap without using any built-in libraries.
+     * Implement `put(key, value)`, `get(key)`, `remove(key)`.
+     *
+     * INPUT/OUTPUT:
+     * put(1, 1), put(2, 2), get(1) -> 1, get(3) -> -1, put(2, 1), get(2) -> 1.
+     *
+     * DESIGN:
+     * Why Array of Linked Lists?
+     * - Same as HashSet, but nodes store `(key, value)` pair.
+     * - `ListNode` usually defined as `val` only, so we imagine a generic PairNode or reuse ListNode with some structure (here simulated).
+     *
+     * DETAIL:
+     * 1. Hashing: `key % size`.
+     * 2. `put`: If key exists, update value. Else append.
+     * 3. `get`: Find key, return value. Else -1.
+     *
+     * COMPLEXITY:
+     * Time: O(1) avg.
+     * Space: O(N + K).
      */
     @Test
     fun q12_designHashMap() {
         println("=== Q12: Design HashMap ===")
-        println("Logic: Array<ListNode?>. Node stores (key, val).")
+        // Conceptual implementation using similar structure to Q11
+        // Node structure needs to hold Key and Value. 
+        // For standard ListNode(val), we can't store both without modification.
+        // Logic: buckets[h] -> find key -> return/update val.
+        println("See Q11 for Chaining mechanism.")
     }
 
     /**
      * 13. Print Immutable Linked List in Reverse
-     * Logic: Recursion.
+     *
+     * PROBLEM:
+     * You are given an immutable linked list, print the values of each node in reverse from the tail to the head.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4] -> Output: "4 3 2 1"
+     *
+     * DESIGN:
+     * Why Recursion?
+     * - We can't reverse the list (immutable).
+     * - `O(N)` space is allowed (stack).
+     * - Recursion implicitly uses stack. Go to end, then print on the way back.
+     *
+     * DETAIL:
+     * 1. `solve(node)`:
+     *    - If `node == null`: return.
+     *    - `solve(node.next)`.
+     *    - Print `node.val`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(N) - Recursion stack.
      */
     @Test
     fun q13_printReverse() {
@@ -258,7 +588,32 @@ class LinkedListProblemsEasy {
 
     /**
      * 14. Delete N Nodes After M Nodes
-     * Logic: Skip M, then loop N times deleting.
+     *
+     * PROBLEM:
+     * Given the head of a linked list and two integers `m` and `n`.
+     * Traverse the list. Keep the first `m` nodes. Then remove the next `n` nodes.
+     * Continue this pattern until the end of the list.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4,5,6,7,8,9,10,11,12,13], m=2, n=3
+     * Output: [1,2, 6,7, 11,12] (Removed 3,4,5 and 8,9,10)
+     *
+     * DESIGN:
+     * Why Nested Loops or Linear Scan?
+     * - We have two phases: "Skipping M" and "Deleting N".
+     * - Use pointers to connect the end of "Keep" to the start of next "Keep".
+     *
+     * DETAIL:
+     * 1. `curr = head`.
+     * 2. Loop `curr != null`:
+     *    - Keep M: loop `m-1` times advancing `curr`. If end reached, break.
+     *    - Save `lastKept = curr`.
+     *    - Delete N: loop `n` times using temp pointer `t = curr.next`.
+     *    - Link: `lastKept.next = t.next`. `curr = lastKept.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q14_deleteNAfterM() {
@@ -286,8 +641,29 @@ class LinkedListProblemsEasy {
     }
 
     /**
-     * 15. Kth Node From End
-     * Logic: Two pointers, gap K.
+     * 15. Kth Node From End of List
+     *
+     * PROBLEM:
+     * Return the Kth node from the end of the list.
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4,5], k=2 -> Output: 4
+     *
+     * DESIGN:
+     * Why Two Pointers (Gap Method)?
+     * - We want `slow` to be at `L-K` when `fast` is at `L`.
+     * - Start `fast` K steps ahead of `slow`.
+     * - Move both until `fast` hits end.
+     *
+     * DETAIL:
+     * 1. `slow = head`, `fast = head`.
+     * 2. Move `fast` K times.
+     * 3. Loop while `fast != null`: slow++, fast++.
+     * 4. Return `slow`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q15_kthFromEnd() {
@@ -303,8 +679,33 @@ class LinkedListProblemsEasy {
     }
 
     /**
-     * 16. Swap Node in Pairs (Simplified)
-     * Logic: Iterative swap.
+     * 16. Swap Nodes in Pairs
+     *
+     * PROBLEM:
+     * Given a linked list, swap every two adjacent nodes and return its head.
+     * You must solve the problem without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)
+     *
+     * INPUT/OUTPUT:
+     * Input: head = [1,2,3,4] -> Output: [2,1,4,3]
+     *
+     * DESIGN:
+     * Why Dummy Node and Cur Pointer?
+     * - We need to change prev.next to point to the new first node of the pair.
+     * - Structure: `prev -> a -> b -> rest` => `prev -> b -> a -> rest`.
+     *
+     * DETAIL:
+     * 1. `dummy.next = head`. `prev = dummy`.
+     * 2. Loop while `prev.next` and `prev.next.next` exist:
+     *    - `a = prev.next`, `b = a.next`.
+     *    - `prev.next = b`.
+     *    - `a.next = b.next`.
+     *    - `b.next = a`.
+     *    - `prev = a`.
+     * 3. Return `dummy.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q16_swapPairs() {
@@ -317,15 +718,38 @@ class LinkedListProblemsEasy {
             val second = curr.next!!.next!!
             first.next = second.next
             second.next = first
-            curr.next = second
-            curr = first
+            curr.next = second // Link from prev
+            curr = first // Move prev to end of swapped pair
         }
         printList(dummy.next)
     }
 
     /**
-     * 17. Add Two Numbers (Easy version usually, Medium on LC)
-     * Logic: Carry handling.
+     * 17. Add Two Numbers
+     *
+     * PROBLEM:
+     * You are given two non-empty linked lists representing two non-negative integers. The digits are stored in reverse order, and each of their nodes contains a single digit. Add the two numbers and return the sum as a linked list.
+     *
+     * INPUT/OUTPUT:
+     * Input: l1 = [2,4,3], l2 = [5,6,4] -> Output: [7,0,8] (342 + 465 = 807)
+     *
+     * DESIGN:
+     * Why Carry Propagation?
+     * - Just like elementary math. Add digits at same position + carry.
+     * - `sum = val1 + val2 + carry`.
+     * - `newVal = sum % 10`, `carry = sum / 10`.
+     *
+     * DETAIL:
+     * 1. `dummy` head. `curr = dummy`. `carry = 0`.
+     * 2. Loop while `l1` or `l2` or `carry`:
+     *    - Get values (0 if null).
+     *    - Compute sum. Update carry.
+     *    - `curr.next = Node(sum % 10)`.
+     *    - Advance ptrs.
+     *
+     * COMPLEXITY:
+     * Time: O(max(N, M))
+     * Space: O(max(N, M)) - Output list.
      */
     @Test
     fun q17_addTwoNumbers() {
@@ -344,8 +768,30 @@ class LinkedListProblemsEasy {
     }
 
     /**
-     * 18. Remove Duplicates (Unsorted)
-     * Logic: HashSet buffer.
+     * 18. Remove Duplicates from an Unsorted Linked List
+     *
+     * PROBLEM:
+     * Given an unsorted linked list, remove duplicate values.
+     *
+     * INPUT/OUTPUT:
+     * Input: [1,2,1,3] -> Output: [1,2,3]
+     *
+     * DESIGN:
+     * Why HashSet?
+     * - List is not sorted, so duplicates aren't adjacent.
+     * - We must remember what we've seen.
+     * - `HashSet` provides O(1) lookup.
+     *
+     * DETAIL:
+     * 1. `set`. `curr = head`. `prev = null`.
+     * 2. Loop `curr`:
+     *    - If `set.contains(curr.val)`: `prev.next = curr.next` (delete).
+     *    - Else: `set.add`, `prev = curr`.
+     *    - `curr = curr.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(N)
      */
     @Test
     fun q18_removeDuplicatesUnsorted() {
@@ -366,19 +812,71 @@ class LinkedListProblemsEasy {
     }
 
     /**
-     * 19. Check if Circular
-     * Logic: Fast/Slow.
+     * 19. Check if Linked List is Circular
+     *
+     * PROBLEM:
+     * Determine if a linked list is circular (connected end-to-end like a ring) or has a cycle.
+     * Specifically, if the last node points to the head (Circular List vs List with Cycle).
+     *
+     * INPUT/OUTPUT:
+     * Input: 1->2->3->1 (Back to head) -> true.
+     *
+     * DESIGN:
+     * Why Traversal?
+     * - If we specifically check "Circular Linked List" where tail points to head:
+     * - Traverse `curr` until `null`. If `curr.next == head`, it's circular.
+     * - If generic cycle: Floyd's (Q4).
+     *
+     * DETAIL:
+     * 1. If head is null, true/false depending on def.
+     * 2. `curr = head`.
+     * 3. Loop `curr.next != null && curr.next != head`.
+     * 4. Check condition.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q19_checkCircular() {
         println("=== Q19: Check Circular ===")
-        // Same as Has Cycle
-        println("Result: See Q4")
+        // Logic specific to checking ring topology:
+        val head = ListNode(1)
+        head.next = head // Circular
+        
+        var curr = head
+        var circular = false
+        // Safety bound for demo
+        var steps = 0
+        while (curr.next != null && steps < 10) {
+            if (curr.next == head) { circular = true; break }
+            curr = curr.next!!
+            steps++
+        }
+        println("Result: $circular")
     }
 
     /**
-     * 20. Count Nodes
-     * Logic: Traversal.
+     * 20. Count Nodes in Linked List
+     *
+     * PROBLEM:
+     * Count the number of nodes in a given singly linked list.
+     *
+     * INPUT/OUTPUT:
+     * Input: 1->2->3 -> Output: 3
+     *
+     * DESIGN:
+     * Why Iteration?
+     * - Simple traversal incrementing a counter.
+     *
+     * DETAIL:
+     * 1. `count = 0`.
+     * 2. `curr = head`.
+     * 3. Loop `curr != null`: `count++`, `curr = curr.next`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1)
      */
     @Test
     fun q20_countNodes() {

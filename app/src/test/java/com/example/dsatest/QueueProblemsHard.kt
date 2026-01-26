@@ -18,18 +18,52 @@ class QueueProblemsHard {
 
     /**
      * 1. Sliding Window Maximum
-     * Logic: Monotonic Deque.
+     *
+     * PROBLEM:
+     * Return max element in sliding window of size `k`.
+     *
+     * DESIGN:
+     * Why Monotonic Queue?
+     * - We need max of current window.
+     * - Store indices in Deque.
+     * - Maintain deque elements in decreasing order of their *values*.
+     * - Front of deque is always the index of the maximum element in current window.
+     * - Slide window:
+     *   - Remove indices from front that are out of window (`< i - k + 1`).
+     *   - While `nums[back] < nums[i]`, pop back (monotonicity).
+     *   - Push `i`.
+     *   - Record `nums[front]` as max.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(K)
      */
     @Test
     fun q1_slidingWindowMax() {
         println("=== Q1: Sliding Window Max ===")
-        // See QueuePatterns or Stack/Array sections
-        println("Logic: Monotonic Queue.")
+        // See QueuePatterns or Stack/Array sections for full impl
+        println("Logic: Monotonic Decreasing Queue storing indices.")
     }
 
     /**
-     * 2. Trapping Rain Water II (3D)
-     * Logic: Min Priority Queue on boundaries. Shrink inward.
+     * 2. Trapping Rain Water II
+     *
+     * PROBLEM:
+     * 2D Grid elevation map. Water trapped inside.
+     *
+     * DESIGN:
+     * Why Priority Queue (Min-Heap)?
+     * - Water spills from the lowest boundary.
+     * - Add all border cells to Min Heap. Mark visited.
+     * - While Heap not empty:
+     *   - Poll min height cell `(h, r, c)`. This is the lowest wall of the "bucket" currently.
+     *   - Check neighbors:
+     *     - If neighbor height `h_n < h`, it traps `h - h_n` water (because `h` is the lowest boundary protecting it).
+     *     - Fill neighbor to level `max(h, h_n)`. Push neighbor to heap. Mark visited.
+     *
+     * COMPLEXITY:
+     * Time: O(M*N log(M*N))
+     * Space: O(M*N)
      */
     @Test
     fun q2_trapRainWaterII() {
@@ -67,7 +101,20 @@ class QueueProblemsHard {
 
     /**
      * 3. Word Ladder
-     * Logic: BFS.
+     *
+     * PROBLEM:
+     * Transform `beginWord` to `endWord` changing 1 letter at a time, using words from `wordList`.
+     * Shortest path length.
+     *
+     * DESIGN:
+     * Why BFS?
+     * - Shortest path in unweighted graph where nodes are words and edges differ by 1 char.
+     * - Optimization: Change each character 'a'-'z' to find neighbors instead of checking all word pairs (26*L vs N).
+     * - Use `Set` for quick lookup and visited marking.
+     *
+     * COMPLEXITY:
+     * Time: O(M^2 * N) where M is word length.
+     * Space: O(M * N)
      */
     @Test
     fun q3_wordLadder() {
@@ -101,7 +148,19 @@ class QueueProblemsHard {
 
     /**
      * 4. Word Ladder II
-     * Logic: BFS (build graph) + DFS (paths).
+     *
+     * PROBLEM:
+     * Return ALL shortest transformation sequences.
+     *
+     * DESIGN:
+     * Why BFS + DFS?
+     * - BFS to find the shortest distance from `begin` to `end` and build a "DAG" (Directed Acyclic Graph) of valid transitions.
+     * - `dist` map stores min distance to each word.
+     * - DFS (Backtracking) from `end` to `begin` using the `dist` map to ensure strictly decreasing distance (shortest path).
+     *
+     * COMPLEXITY:
+     * Time: O(V + E) for BFS, but paths can be exponential.
+     * Space: O(V)
      */
     @Test
     fun q4_wordLadderII() {
@@ -111,7 +170,22 @@ class QueueProblemsHard {
 
     /**
      * 5. Course Schedule III
-     * Logic: Sort by EndTime. Max Heap of durations. Swap if overrun.
+     *
+     * PROBLEM:
+     * Courses `[duration, lastDay]`. Maximize number of courses taken.
+     *
+     * DESIGN:
+     * Why Priority Queue (Max-Heap)?
+     * - Sort courses by `lastDay`. (Greedy: Deal with earlier deadlines first).
+     * - Iterate sorted courses.
+     * - Add course duration to `currentTotalTime`. Push duration to Max Heap.
+     * - If `currentTotalTime > c.lastDay`:
+     *   - We overshot. We must drop a course.
+     *   - Drop the course with the *largest duration* so far (Max Heap top). This frees up the most time, keeping the count same (swap long course for short one).
+     *
+     * COMPLEXITY:
+     * Time: O(N log N)
+     * Space: O(N)
      */
     @Test
     fun q5_courseScheduleIII() {
@@ -130,7 +204,22 @@ class QueueProblemsHard {
 
     /**
      * 6. Minimum Cost to Hire K Workers
-     * Logic: Ratio sort. Max Heap.
+     *
+     * PROBLEM:
+     * `quality`, `wage`, `k`. Pay proportional to quality. Min wage constraint. Min total cost.
+     *
+     * DESIGN:
+     * Why Ratio Sorting + Max Heap?
+     * - Every worker in a hired group is paid based on the max `wage/quality` ratio in that group.
+     * - `Ratio = wage[i] / quality[i]`.
+     * - Sort workers by `Ratio`. Iterate.
+     * - For current worker (max ratio so far), we want smallest sum of `K` qualities.
+     * - Maintain sum of qualities in Max Heap (size K). Remove largest quality if size > K.
+     * - `Cost = CurrentRatio * SumQualities`.
+     *
+     * COMPLEXITY:
+     * Time: O(N log N)
+     * Space: O(N)
      */
     @Test
     fun q6_minCostWorkers() {
@@ -140,7 +229,24 @@ class QueueProblemsHard {
 
     /**
      * 7. IPO
-     * Logic: Two Heaps (Min Heap Capital, Max Heap Profit).
+     *
+     * PROBLEM:
+     * Initial capital `W`. Max `k` projects. `Profits[i]`, `Capital[i]`.
+     * Maximize final capital.
+     *
+     * DESIGN:
+     * Why Two Heaps?
+     * - We can only start projects where `Capital[i] <= currentCapital`.
+     * - Among feasible projects, pick one with max `Profit`.
+     * - Store projects as (Capital, Profit). Sort by Capital (or Min Heap).
+     * - Max Heap for feasible Profits.
+     * - Iterate `k` times:
+     *   - Move all feasible projects from Capital-Sources to Profit-Heap.
+     *   - Pick max profit, add to `currentCapital`.
+     *
+     * COMPLEXITY:
+     * Time: O(N log N)
+     * Space: O(N)
      */
     @Test
     fun q7_IPO() {
@@ -165,7 +271,21 @@ class QueueProblemsHard {
 
     /**
      * 8. Find Median from Data Stream
-     * Logic: Two Heaps (Max Heap Lower, Min Heap Upper).
+     *
+     * PROBLEM:
+     * Add numbers, find median efficiently.
+     *
+     * DESIGN:
+     * Why Two Heaps?
+     * - We need the middle element(s).
+     * - Max Heap `lo`: Stores smaller half.
+     * - Min Heap `hi`: Stores larger half.
+     * - Balance: `size(lo) == size(hi)` (even total) or `size(lo) == size(hi) + 1` (odd total).
+     * - Add: Push to `lo`, then move max of `lo` to `hi`. Rebalance if `hi > lo`.
+     *
+     * COMPLEXITY:
+     * Time: O(log N) add, O(1) find.
+     * Space: O(N)
      */
     @Test
     fun q8_medianDataStream() {
@@ -185,7 +305,21 @@ class QueueProblemsHard {
 
     /**
      * 9. Swim in Rising Water
-     * Logic: Dijkstra (Min Heap) on 2D Grid.
+     *
+     * PROBLEM:
+     * Grid `N x N`. Height `grid[i][j]`. Can swim between neighbors if `max(both_heights) <= t`.
+     * Min time `t` to reach `(N-1, N-1)` from `(0,0)`.
+     *
+     * DESIGN:
+     * Why Dijkstra (Min Heap)?
+     * - Cost to reach a cell is `max(path_max_height)`.
+     * - We want path with minimum max-height (Minimax path).
+     * - Min Heap stores `(height, r, c)`.
+     * - Expand smallest height neighbor. `res = max(res, height)`.
+     *
+     * COMPLEXITY:
+     * Time: O(N^2 log N)
+     * Space: O(N^2)
      */
     @Test
     fun q9_swimRisingWater() {
@@ -212,8 +346,23 @@ class QueueProblemsHard {
     }
 
     /**
-     * 10. Cut Off Trees
-     * Logic: BFS step-by-step from min height tree to next min.
+     * 10. Cut Off Trees for Golf Event
+     *
+     * PROBLEM:
+     * Cut trees in increasing order of height. (Start at 0,0).
+     * Calculate min steps to cut all.
+     *
+     * DESIGN:
+     * Why BFS step-by-step?
+     * - We MUST visit trees in specific sorted order (H1 < H2 < H3...).
+     * - Sort all trees by height.
+     * - `total_dist = BFS(start, tree1) + BFS(tree1, tree2) + ...`
+     * - If any tree unreachable, return -1.
+     * - A* Search is better optimization here.
+     *
+     * COMPLEXITY:
+     * Time: O(M^2 * N^2) roughly (Sum of BFS).
+     * Space: O(M*N)
      */
     @Test
     fun q10_cutOffTrees() {
@@ -222,8 +371,22 @@ class QueueProblemsHard {
     }
 
     /**
-     * 11. Shortest Path Grid Obstacles Elimination
-     * Logic: BFS state (r, c, k_remaining).
+     * 11. Shortest Path in a Grid with Obstacles Elimination
+     *
+     * PROBLEM:
+     * Reach (M-1, N-1) from (0,0). Can remove `k` obstacles. Min steps.
+     *
+     * DESIGN:
+     * Why BFS with State?
+     * - Standard BFS finds shortest path.
+     * - State involves `(row, col, remaining_k)`.
+     * - `visited[row][col] = max_k_remaining`.
+     * - If we visit `(r, c)` again with *less* `k`, it's not optimal. But if we visit with *more* `k`, it might be better (allows more cuts later).
+     * - Push `(r, c, k, dist)`.
+     *
+     * COMPLEXITY:
+     * Time: O(M * N * K)
+     * Space: O(M * N * K)
      */
     @Test
     fun q11_shortestPathObstacles() {
@@ -232,8 +395,22 @@ class QueueProblemsHard {
     }
 
     /**
-     * 12. Min Moves to Move Box
-     * Logic: BFS state (box_r, box_c, player_r, player_c).
+     * 12. Minimum Moves to Move a Box to Their Target Location
+     *
+     * PROBLEM:
+     * Player (S) pushes Box (B) to Target (T). Grid has walls (#).
+     * Min component moves (pushes).
+     *
+     * DESIGN:
+     * Why Nested BFS?
+     * - Outer BFS: Moves the *Box* state `(boxR, boxC, playerR, playerC)`.
+     * - To push box from `(r, c)` to `(r', c')`, player must be at `(r - dr, c - dc)`.
+     * - Inner BFS: Can Player reach `(push_start_r, push_start_c)` from `current_player_pos` without touching box?
+     * - State space is effectively `size * size * 4` (box pos + direction of arrival).
+     *
+     * COMPLEXITY:
+     * Time: O((MN)^2)
+     * Space: O((MN)^2)
      */
     @Test
     fun q12_moveBox() {
@@ -243,7 +420,21 @@ class QueueProblemsHard {
 
     /**
      * 13. Bus Routes
-     * Logic: BFS on Routes (not Stops).
+     *
+     * PROBLEM:
+     * Routes `[[1, 2, 7], [3, 6, 7]]`. Start stop S, target T.
+     * Min buses to take.
+     *
+     * DESIGN:
+     * Why BFS on Routes?
+     * - Stops are nodes? Too many stops (10^6). Routes are few (500).
+     * - Graph: Nodes = Routes. Edge exists if Routes share a stop.
+     * - Map `Stop -> List<RouteID>`.
+     * - BFS: Start with all routes containing S. Target: any route containing T.
+     *
+     * COMPLEXITY:
+     * Time: O(N * M) or sum of route lengths.
+     * Space: O(N * M)
      */
     @Test
     fun q13_busRoutes() {
@@ -253,7 +444,24 @@ class QueueProblemsHard {
 
     /**
      * 14. Race Car
-     * Logic: BFS (pos, speed).
+     *
+     * PROBLEM:
+     * Start 0, speed 1.
+     * `A`: pos += speed, speed *= 2.
+     * `R`: speed = (speed > 0) ? -1 : 1.
+     * Reach target. Min instructions.
+     *
+     * DESIGN:
+     * Why BFS?
+     * - Shortest path in state space `(position, speed)`.
+     * - Pruning:
+     *   - Bound `pos`: `0 < pos < 2 * target`.
+     *   - Bound `speed`: log(target).
+     * - Use String Set "pos,speed" for visited.
+     *
+     * COMPLEXITY:
+     * Time: O(Target * log(Target))
+     * Space: O(Target * log(Target))
      */
     @Test
     fun q14_raceCar() {
@@ -270,7 +478,7 @@ class QueueProblemsHard {
                 
                 // A logic
                 val nPos = pos + speed; val nSpeed = speed * 2
-                if(!visited.contains("$nPos,$nSpeed") && Math.abs(nPos - target) < target) {
+                if(nPos > 0 && nPos < 2 * target && !visited.contains("$nPos,$nSpeed")) {
                     visited.add("$nPos,$nSpeed"); q.add(nPos to nSpeed)
                 }
                 
@@ -286,7 +494,20 @@ class QueueProblemsHard {
 
     /**
      * 15. Sliding Puzzle
-     * Logic: BFS String state.
+     *
+     * PROBLEM:
+     * 2x3 board `[[1,2,3],[4,5,0]]`. 0 is swap slot. Reach `123450`.
+     *
+     * DESIGN:
+     * Why String BFS?
+     * - State: String "123450".
+     * - Neighbors: Swap '0' with adjacent indices (precomputed adjacency graph for 2x3 grid).
+     * - Visited Set.
+     * - Total states 6! = 720. Very small.
+     *
+     * COMPLEXITY:
+     * Time: O(6!)
+     * Space: O(6!)
      */
     @Test
     fun q15_slidingPuzzle() {
@@ -297,7 +518,20 @@ class QueueProblemsHard {
 
     /**
      * 16. Open the Lock
-     * Logic: BFS '0000'.
+     *
+     * PROBLEM:
+     * 4 wheels "0000". Target "T". Deadends "D".
+     *
+     * DESIGN:
+     * Why Bidirectional BFS?
+     * - Start BFS from "0000" and Target "T" simultaneously.
+     * - Meet in middle.
+     * - Reduces search space significantly (b^(d/2) vs b^d).
+     * - `visited` Set for deadends + processed.
+     *
+     * COMPLEXITY:
+     * Time: O(A^D) (A=10, D=4) -> Constant 10000 states.
+     * Space: O(A^D)
      */
     @Test
     fun q16_openLock() {
@@ -306,8 +540,20 @@ class QueueProblemsHard {
     }
 
     /**
-     * 17. Min Jumps to Reach Home
-     * Logic: BFS. State (index, canBack).
+     * 17. Minimum Jumps to Reach Home
+     *
+     * PROBLEM:
+     * Forbidden set. Jump `a` forward, `b` backward. Cannot jump back twice in row.
+     *
+     * DESIGN:
+     * Why BFS (Index, BackJumped)?
+     * - State: `(index, did_back_jump)`.
+     * - Limit: Upper bound? Typically `max(forbidden) + a + b`. Proof exists for ~6000.
+     * - Visited: `visited[index][did_back]`.
+     *
+     * COMPLEXITY:
+     * Time: O(M) where M is search range.
+     * Space: O(M)
      */
     @Test
     fun q17_minJumpsHome() {
@@ -316,8 +562,20 @@ class QueueProblemsHard {
     }
 
     /**
-     * 18. Min Flips Matrix Zero
-     * Logic: BFS bitmask.
+     * 18. Minimum Number of Flips to Convert Binary Matrix to Zero Matrix
+     *
+     * PROBLEM:
+     * 3x3 or NxM. Flip (r,c) flips neighbors. Min steps to all 0.
+     *
+     * DESIGN:
+     * Why Bitmask BFS?
+     * - Small constraints (N, M <= 3). Max 9 cells.
+     * - State: Integer mask of 9 bits.
+     * - BFS to find 0 status.
+     *
+     * COMPLEXITY:
+     * Time: O(2^(NM)). 2^9 = 512. Very fast.
+     * Space: O(2^(NM))
      */
     @Test
     fun q18_minFlipsMatrix() {
@@ -327,7 +585,22 @@ class QueueProblemsHard {
 
     /**
      * 19. Closest Room
-     * Logic: Sort + TreeSet.
+     *
+     * PROBLEM:
+     * Rooms `[id, size]`. Queries `[pref_id, min_size]`.
+     * Find room with `size >= min_size` closest to `pref_id`.
+     *
+     * DESIGN:
+     * Why Offline Query + TreeSet?
+     * - Sort Queries by `min_size` descending.
+     * - Sort Rooms by `size` descending.
+     * - Iterate queries (largest size req first).
+     * - Add all valid rooms (size >= req) to a `TreeSet` (ordered by ID).
+     * - Query TreeSet: `floor(pref_id)` and `ceiling(pref_id)`. Closest wins.
+     *
+     * COMPLEXITY:
+     * Time: O(N log N + Q log Q + Q log N)
+     * Space: O(N)
      */
     @Test
     fun q19_closestRoom() {
@@ -336,8 +609,25 @@ class QueueProblemsHard {
     }
 
     /**
-     * 20. Max Number of Tasks Assign
-     * Logic: Binary Search on Answer + Greedy (Deque).
+     * 20. Maximum Number of Tasks You Can Assign
+     *
+     * PROBLEM:
+     * Tasks `[req]`. Workers `[strong]`. `p` magical pills (strength +S).
+     * Max tasks completed.
+     *
+     * DESIGN:
+     * Why Binary Search Answer + Deque?
+     * - Check if `k` tasks can be done.
+     * - Take `k` smallest tasks. Take `k` strongest active workers.
+     * - For largest task in set:
+     *   - Can strongest worker do it without pill? YES -> Do it.
+     *   - Can strongest worker do it WITH pill? YES -> Use pill. (Greedy: Use pill on weaker worker? No, we process largest task first usually req pill).
+     *   - Actually correct greedy: Process tasks largest to smallest.
+     *   - Use `TreeMap` or `Deque` to manage workers.
+     *
+     * COMPLEXITY:
+     * Time: O(N log N * log N)
+     * Space: O(N)
      */
     @Test
     fun q20_maxTasksAssign() {

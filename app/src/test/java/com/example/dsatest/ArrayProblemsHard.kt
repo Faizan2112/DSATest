@@ -660,7 +660,7 @@ class ArrayProblemsHard {
      * 
      * DETAIL:
      * 1. `cut[i]` = min cuts for s[0..i].
-     * 2. Inner loop j: If `s[j..i]` is palindrome, `cut[i] = min(cut[j-1]+1)`.
+     * 2. Inner loop j: If s[j..i] is palindrome, `cut[i] = min(cut[j-1]+1)`.
      * 
      * COMPLEXITY: Time O(n^2) | Space O(n^2)
      */

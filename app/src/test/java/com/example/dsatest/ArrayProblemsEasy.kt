@@ -412,6 +412,62 @@ class ArrayProblemsEasy {
      * 
      * COMPLEXITY: Time O(n) | Space O(1)
      */
+/*
+    this code, the XOR (xor) operator is used to find the missing number by exploiting three mathematical properties of bitwise XOR:
+    1.
+    $A \oplus A = 0$: Any number XORed with itself results in 0.
+    2.
+    $A \oplus 0 = A$: Any number XORed with 0 remains unchanged.
+    3.
+    Commutative & Associative: The order in which you XOR numbers doesn't matter ($A \oplus B \oplus C$ is the same as $C \oplus A \oplus B$).
+    How it works in the "Missing Number" problem:
+    If you have an array of size $n$ containing numbers from $0$ to $n$ with one missing, you essentially have two sets of numbers:
+    1.
+    The Complete Set: Every number from $0$ to $n$.
+    2.
+    The Actual Set: Every number in your nums array.
+    If you XOR everything together, every number that appears in both sets will pair up and cancel itself out to $0$. The only number left standing is the one that didn't have a pair—the missing number.
+    Step-by-Step Dry Run
+    Using your input: nums = [3, 0, 1] (Size is 3, so expected numbers are 0, 1, 2, 3).
+    1. The Setup
+    var xor = 0
+    2. First Loop: XOR all numbers that should be there (0 to $n$)
+    Kotlin
+    for (i in 0..nums.size) xor = xor xor i
+    •
+    0 ^ 0 = 0
+    •
+    0 ^ 1 = 1
+    •
+    1 ^ 2 = 3 (binary 01 ^ 10 = 11)
+    •
+    3 ^ 3 = 0 (binary 11 ^ 11 = 00)
+    •
+    Result after loop: 0 (This is just $0 \oplus 1 \oplus 2 \oplus 3$)
+    3. Second Loop: XOR all numbers that are actually in the array
+    Kotlin
+    for (n in nums) xor = xor xor n
+    Current xor is $0 \oplus 1 \oplus 2 \oplus 3$. Now we XOR it with 3, 0, 1:
+    •
+    xor = (0 ^ 1 ^ 2 ^ 3) ^ 3 ^ 0 ^ 1
+    4. The Magic (Reordering)
+    Because XOR is commutative, we can rearrange the operation:
+    •
+    xor = (0 ^ 0) ^ (1 ^ 1) ^ (3 ^ 3) ^ 2
+    •
+    xor = 0 ^ 0 ^ 0 ^ 2
+    •
+    xor = 2
+    The result is 2, which is the missing number.
+
+    Why use this instead of Summation?
+While you could also find the missing number using the sum formula ($Sum_{expected} - Sum_{actual}$), XOR is often preferred because:
+1.
+No Overflow: Adding very large numbers can exceed the maximum value of an Integer. XOR never overflows; it only flips bits.
+2.
+Performance: Bitwise operations are extremely fast at the hardware level.
+
+    */
     @Test
     fun q11_missingNumber() {
         println("=== Q11: Missing Number ===")
