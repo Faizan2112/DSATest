@@ -11,6 +11,14 @@ import java.util.HashMap
  * Strings are the most common interview topic.
  * They usually involve: Two Pointers, Sliding Window, or Hashing.
  * 
+ * INTERVIEW CHEATSHEET:
+ * 1. Two Pointers: Palindromes, Reversing. O(N).
+ * 2. Sliding Window: Longest/Shortest Substring problems. O(N).
+ *    - Logic: Expand R, Shrink L. Use Map/Set to track window state.
+ * 3. Hashing: Anagrams, Count frequencies. O(N).
+ *    - Tip: Use `IntArray(26)` for 'a'-'z' instead of HashMap for speed.
+ * 4. KMP / Rolling Hash: Pattern matching (Advanced).
+ * 
  * ==========================================
  * THE 60 QUESTION BUCKET LIST
  * ==========================================

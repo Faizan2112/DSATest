@@ -36,8 +36,13 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 1. STACK (LIFO)
+     * 1. STACK (LIFO - Last In First Out)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Like a stack of plates. You can only touch the top.
+     * - Complexity: Push O(1), Pop O(1), Peek O(1).
+     * - Usage: Backtracking (Maze), Undo features, Parsing expressions, DFS.
+     * - Pro Tip: If you need to "reverse" something or "match" pairs, think Stack.
      */
     @Test
     fun stackBasic() {
@@ -67,8 +72,13 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 2. QUEUE (FIFO)
+     * 2. QUEUE (FIFO - First In First Out)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Like a line at Starbucks. First come, first served.
+     * - Complexity: Enqueue (Offer) O(1), Dequeue (Poll) O(1).
+     * - Usage: BFS (Shortest Path), Task Scheduling, Printer jobs.
+     * - Pro Tip: Use `LinkedList` or `ArrayDeque` in Java/Kotlin. `ArrayDeque` is faster.
      */
     @Test
     fun queueBasic() {
@@ -85,6 +95,11 @@ class DataStructuresDeepDive {
      * ==========================================
      * 3. LINKED LIST
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Nodes pointing to next nodes. Discontiguous memory.
+     * - Complexity: Insert Head O(1), Insert End O(N) (unless tail pointer), Find O(N).
+     * - Usage: Dynamic size, when memory is fragmented.
+     * - Pro Tip: "Runner Technique" (Slow/Fast pointers) solves 90% of LL problems.
      */
     @Test
     fun linkedListBasic() {
@@ -107,8 +122,13 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 4. TREES (BST)
+     * 4. TREES (BST - Binary Search Tree)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Hierarchical data. Root -> Children.
+     * - Complexity: Search/Insert/Delete O(log N) (Balanced), O(N) (Skewed).
+     * - Usage: Hierarchy systems, Fast lookup/insert (TreeMap), Sorting (TreeSort).
+     * - Pro Tip: Recursion is your best friend here. Always think "Root - Left - Right".
      */
     data class TreeNode(var value: Int, var left: TreeNode? = null, var right: TreeNode? = null)
 
@@ -144,6 +164,11 @@ class DataStructuresDeepDive {
      * ==========================================
      * 5. GRAPH
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Nodes (Vertices) and Edges connecting them.
+     * - Forms: Adjacency List (Map<Node, List<Node>>) vs Adjacency Matrix (Int[][]).
+     * - Usage: Social Networks, Maps (GPS), Dependencies.
+     * - Pro Tip: BFS for Shortest Path (Unweighted). DFS for "Does path exist?".
      */
     @Test
     fun graphBasic() {
@@ -176,6 +201,11 @@ class DataStructuresDeepDive {
      * ==========================================
      * 6. HEAP (Priority Queue)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Tree where Parent is always <= Child (Min Heap) or >= Child (Max Heap).
+     * - Complexity: Insert O(log N), Poll O(log N), Peek O(1).
+     * - Usage: Scheduling, K-th Largest/Smallest, Dijkstra's Algo.
+     * - Pro Tip: Use `PriorityQueue` in Kotlin. Default is Min-Heap. Use `reverseOrder` for Max-Heap.
      */
     @Test
     fun heapBasic() {
@@ -198,6 +228,11 @@ class DataStructuresDeepDive {
      * ==========================================
      * 7. SET (HashSet)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Collection of UNIQUE elements. Order not guaranteed.
+     * - Complexity: Add/Remove/Contains O(1).
+     * - Usage: Removing duplicates, Checking presence O(1).
+     * - Pro Tip: Use `LinkedHashSet` if you need to remember insertion order.
      */
     @Test
     fun setBasic() {
@@ -209,8 +244,13 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 8. DEQUE
+     * 8. DEQUE (Double Ended Queue)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Queue where you can add/remove from BOTH ends.
+     * - Complexity: All ops O(1).
+     * - Usage: Sliding Window Maximum (Monotonic Queue), Palindrome checking.
+     * - Pro Tip: In Kotlin, `ArrayDeque` is the go-to implementation.
      */
     @Test
     fun dequeBasic() {
@@ -222,8 +262,13 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 9. TRIE
+     * 9. TRIE (Prefix Tree)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Tree where edges are characters. Nodes are boolean (isWord).
+     * - Complexity: Insert/Search O(L) where L is word length.
+     * - Usage: Autocomplete, Spell Checker, Prefix matching.
+     * - Pro Tip: Often implemented with a nested Class `Node { children: Map<Char, Node> }`.
      */
     class Trie {
         class Node {
@@ -243,8 +288,14 @@ class DataStructuresDeepDive {
 
     /**
      * ==========================================
-     * 10. UNION FIND
+     * 10. UNION FIND (Disjoint Set)
      * ==========================================
+     * CHEATSHEET:
+     * - Concept: Tracks elements partitioned into disjoint sets.
+     * - Ops: `Union(a, b)` (Connect), `Find(a)` (Check Group).
+     * - Complexity: O(alpha(N)) ~ O(1) (Inverse Ackermann - practically constant).
+     * - Usage: Connected Components, Cycle Detection in Graph, Kruskal's Algo.
+     * - Pro Tip: Requires `Path Compression` and `Union by Rank` for efficiency.
      */
     @Test
     fun unionFindDemo() {
@@ -257,6 +308,9 @@ class DataStructuresDeepDive {
      * ==========================================
      * 11. IMPLEMENTATIONS (ArrayList, HashMap)
      * ==========================================
+     * CHEATSHEET:
+     * - ArrayList: Dynamic Array. Resize O(N). Access O(1). Insert O(N).
+     * - HashMap: Key-Value. Collision handling (Chaining/Probing). Access O(1).
      */
     @Test
     fun implementations() {

@@ -11,10 +11,19 @@ import java.util.ArrayDeque
  * ==========================================
  * 
  * Queues (FIFO) are the engine of BFS and Sliding Window.
+ *
+ * INTERVIEW CHEATSHEET:
+ * 1. BFS (Graph/Matrix): Shortest path in unweighted graph.
+ *    - Logic: Level-by-level traversal.
+ * 2. Monotonic Queue: Sliding Window Maximum/Minimum.
+ *    - Logic: Deque stores indices. Remove "useless" elements (smaller than current for Max). Remove "outdated" (out of window).
+ * 3. Topological Sort (Kahn's): Dependencies.
+ *    - Logic: Queue stores nodes with Indegree 0.
+ *
  * MASTER THESE PATTERNS:
- * 1. BFS (Breadth First Search) - Graph/Tree traversal.
- * 2. Monotonic Queue - Sliding Window functionality.
- * 3. Topological Sort (Kahn's Algo) - Dependency resolution.
+ * 1. BFS (Breadth First Search)
+ * 2. Monotonic Queue
+ * 3. Topological Sort (Kahn's Algo)
  * 
  * ==========================================
  * THE QUESTION BUCKET LIST

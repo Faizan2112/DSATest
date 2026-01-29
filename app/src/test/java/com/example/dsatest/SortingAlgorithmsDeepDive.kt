@@ -17,10 +17,13 @@ import java.util.Arrays
  */
 class SortingAlgorithmsDeepDive {
 
-    /**
+     /**
      * ==========================================
      * 1. BUBBLE SORT (O(n^2))
      * ==========================================
+     * - Complexity: Time O(n^2) | Space O(1).
+     * - Stability: STABLE (Preserves order of equal elements).
+     * - Usage: Teaching only. "Sinks" largest element to the end.
      */
     @Test
     fun bubbleSort() {
@@ -43,6 +46,9 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 2. SELECTION SORT (O(n^2))
      * ==========================================
+     * - Complexity: Time O(n^2) | Space O(1).
+     * - Stability: UNSTABLE (Depending on swap).
+     * - Usage: Very small arrays. Minimizes swaps (O(n) swaps).
      */
     @Test
     fun selectionSort() {
@@ -64,6 +70,9 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 3. INSERTION SORT (O(n^2))
      * ==========================================
+     * - Complexity: Time O(n^2) (O(n) if nearly sorted) | Space O(1).
+     * - Stability: STABLE.
+     * - Usage: Small arrays (N < 50), Streaming data.
      */
     @Test
     fun insertionSort() {
@@ -85,6 +94,9 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 4. MERGE SORT (O(n log n))
      * ==========================================
+     * - Complexity: Time O(n log n) | Space O(n).
+     * - Stability: STABLE.
+     * - Usage: Linked Lists, External Sorting, Stable requirement.
      */
     @Test
     fun mergeSortDemo() {
@@ -123,6 +135,9 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 5. QUICK SORT (O(n log n))
      * ==========================================
+     * - Complexity: Time O(n log n) avg, O(n^2) worst | Space O(log n).
+     * - Stability: UNSTABLE (Partition logic).
+     * - Usage: General purpose (Arrays.sort primitive). Fastest in practice (Cache friendly).
      */
     @Test
     fun quickSortDemo() {
@@ -161,7 +176,9 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 6. COUNTING SORT (O(n + k))
      * ==========================================
-     * Non-Comparative. Good for small range of numbers (e.g., ages, grades).
+     * - Complexity: Time O(N + K) | Space O(K).
+     * - Stability: STABLE (if iterating backwards).
+     * - Usage: Small integer range (e.g., Ages 0-100).
      */
     @Test
     fun countingSort() {
@@ -189,8 +206,8 @@ class SortingAlgorithmsDeepDive {
      * ==========================================
      * 7. CYCLIC SORT (O(n))
      * ==========================================
-     * PATTERN: When given numbers in range [1, N] or [0, N].
-     * Used for "Missing Number", "Find Duplicate".
+     * - Complexity: Time O(N) | Space O(1).
+     * - Usage: "Find Missing/Duplicate Number" in range 1..N.
      */
     @Test
     fun cyclicSort() {

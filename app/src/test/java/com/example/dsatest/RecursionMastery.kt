@@ -41,9 +41,10 @@ class RecursionMastery {
      * ==========================================
      * 2. TAIL RECURSION (`tailrec`)
      * ==========================================
-     * Kotlin Optimization!
-     * If the recursive call is the LAST thing you do, 
-     * Kotlin rewrites it as a LOOOP. Zero stack risk.
+     * CHEATSHEET:
+     * - Concept: If the recursive call is the *last* operation, the compiler optimizes it into a loop.
+     * - Benefit: No Stack Overflow. Constant Space O(1).
+     * - How: Pass the "accumulated result" down as a parameter.
      */
     @Test
     fun tailRecursion() {
@@ -63,13 +64,21 @@ class RecursionMastery {
      * ==========================================
      * 3. BACKTRACKING (Try, Undo, Retry)
      * ==========================================
-     * PROBLEM: Generate all Subsets (Power Set).
-     * [1, 2] -> [], [1], [2], [1, 2]
+     * PROBLEM: Generate all Subsets (Power Set) of [1, 2].
      * 
-     * PATTERN:
-     * 1. Choose
-     * 2. Explore (Recurse)
-     * 3. Un-Choose (Backtrack)
+     * VISUALIZATION (State Tree):
+     *                  []
+     *               /      \
+     *           [1]          []      (Include 1 vs Exclude 1)
+     *          /   \        /  \
+     *      [1,2]   [1]    [2]   []   (Include 2 vs Exclude 2)
+     *
+     * TEMPLATE:
+     * 1. Check Base Case (reached goal).
+     * 2. Iterate Decisions:
+     *    a. Choose (Add to path).
+     *    b. Explore (Recurse).
+     *    c. Un-Choose (Remove from path - Backtrack).
      */
     @Test
     fun backtrackingDemo() {

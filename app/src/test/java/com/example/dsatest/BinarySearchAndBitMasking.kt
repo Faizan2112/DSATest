@@ -78,6 +78,24 @@ class BinarySearchAndBitMasking {
 
     /**
      * ==========================================
+     * 3. SEARCH ON ANSWER SPACE (Concept)
+     * ==========================================
+     * Sometimes, we don't search an array. We search the ANSWER.
+     * Example: "Koko Eating Bananas", "Min Capacity of Ship".
+     * 
+     * PATTERN:
+     * 1. Define Range: [MinPossibleAns, MaxPossibleAns].
+     * 2. Check Function: `canDo(val)` returns boolean.
+     * 3. If `canDo(mid)` is True: Record ans, Try tighter constraint (Left/Right).
+     */
+    @Test
+    fun answerSpaceConcept() {
+        println("\n=== BINARY SEARCH ON ANSWER SPACE ===")
+        println("Logic: define min/max, check feasibility, shrink range.")
+    }
+
+    /**
+     * ==========================================
      * BITWISE OPERATORS CHEATSHEET
      * ==========================================
      * & (AND) : Both 1 -> 1

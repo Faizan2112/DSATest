@@ -9,9 +9,19 @@ import java.util.Stack
  * ==========================================
  * 
  * Stacks seem simple (LIFO), but they power complex algorithms.
+ * 
+ * INTERVIEW CHEATSHEET:
+ * 1. Monotonic Stack: Finding "Next Greater" or "Previous Smaller" element.
+ *    - Logic: Keep stack sorted. Pop when strictly smaller/greater.
+ *    - Complexity: O(N) (Each element pushed/popped at most once).
+ * 2. Parentheses/Parsing: Matching brackets or evaluating math.
+ *    - Logic: Push Openers, Pop Closers.
+ * 3. DFS / Backtracking: Explicit stack mimics recursion.
+ * 4. Two Stacks: Min Stack, Queue implementation.
+ * 
  * MASTER THESE PATTERNS:
- * 1. Monotonic Stack (Next Greater/Smaller Element)
- * 2. Parentheses Matching (Validation)
+ * 1. Monotonic Stack
+ * 2. Parentheses Matching
  * 3. Calculator / Expression Parsing
  * 4. DFS Simulation
  * 
