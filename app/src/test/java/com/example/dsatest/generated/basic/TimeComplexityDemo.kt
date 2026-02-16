@@ -7,7 +7,18 @@ import kotlin.system.measureNanoTime
  * ==========================================
  * TIME COMPLEXITY: THE ARCHITECTURE OF SPEED
  * ==========================================
- * Design & Detail Explanation.
+ * 
+ * HIERARCHY OF SPEED (Fastest to Slowest):
+ * 1. O(1)       - Constant Time     (Array access)
+ * 2. O(log n)   - Logarithmic       (Binary Search)
+ * 3. O(n)       - Linear            (One loop)
+ * 4. O(n log n) - Linearithmic      (Merge Sort)
+ * 5. O(n^2)     - Quadratic         (Nested loops)
+ * 6. O(2^n)     - Exponential       (Brute force recursion)
+ * 7. O(n!)      - Factorial         (Permutations)
+ *
+ * RULE OF THUMB:
+ * - 10^8 operations per second is the typical limit for interview problems.
  */
 class TimeComplexityDemo {
 

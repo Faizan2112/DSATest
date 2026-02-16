@@ -16,13 +16,22 @@ import org.junit.Test
  */
 class SortingAlgorithmsDeepDive {
 
-     /**
-     * ==========================================
+    /**
      * 1. BUBBLE SORT (O(n^2))
-     * ==========================================
-     * - Complexity: Time O(n^2) | Space O(1).
-     * - Stability: STABLE (Preserves order of equal elements).
-     * - Usage: Teaching only. "Sinks" largest element to the end.
+     *
+     * LOGIC:
+     * - Repeatedly step through the list.
+     * - Compare adjacent elements and swap them if they are in the wrong order.
+     * - In each pass, the largest unsorted element "bubbles up" to its correct position at the end.
+     *
+     * VISUALIZATION:
+     * [5, 1, 4, 2] -> [1, 5, 4, 2] -> [1, 4, 5, 2] -> [1, 4, 2, 5] (5 is sorted)
+     *
+     * PROS: Extremely simple to implement. Stable.
+     * CONS: Very slow O(n^2). Even at its best (already sorted), it's O(n) only with optimization.
+     *
+     * COMPLEXITY: Time O(n^2) | Space O(1).
+     * STABILITY: Stable.
      */
     @Test
     fun bubbleSort() {
@@ -30,24 +39,36 @@ class SortingAlgorithmsDeepDive {
         val arr = intArrayOf(5, 1, 4, 2, 8)
         val n = arr.size
         for (i in 0 until n - 1) {
+            var swapped = false
             for (j in 0 until n - i - 1) {
                 if (arr[j] > arr[j + 1]) {
                     val temp = arr[j]
                     arr[j] = arr[j + 1]
                     arr[j + 1] = temp
+                    swapped = true
                 }
             }
+            if (!swapped) break // Optimization for nearly sorted arrays
         }
         println("Result: ${arr.joinToString()}")
     }
 
     /**
-     * ==========================================
      * 2. SELECTION SORT (O(n^2))
-     * ==========================================
-     * - Complexity: Time O(n^2) | Space O(1).
-     * - Stability: UNSTABLE (Depending on swap).
-     * - Usage: Very small arrays. Minimizes swaps (O(n) swaps).
+     *
+     * LOGIC:
+     * - Divide the array into a sorted and an unsorted part.
+     * - Repeatedly find the minimum element from the unsorted part and put it at the beginning.
+     *
+     * VISUALIZATION:
+     * [5, 1, 4, 2] -> Find min (1) -> Swap with 5: [1, 5, 4, 2]
+     * [1, 5, 4, 2] -> Find min in [5, 4, 2] (2) -> Swap with 5: [1, 2, 4, 5]
+     *
+     * PROS: Low number of swaps (exactly n-1 swaps). Good when writing to memory is expensive.
+     * CONS: O(n^2) even if array is sorted. Unstable.
+     *
+     * COMPLEXITY: Time O(n^2) | Space O(1).
+     * STABILITY: Unstable.
      */
     @Test
     fun selectionSort() {
@@ -66,12 +87,21 @@ class SortingAlgorithmsDeepDive {
     }
 
     /**
-     * ==========================================
      * 3. INSERTION SORT (O(n^2))
-     * ==========================================
-     * - Complexity: Time O(n^2) (O(n) if nearly sorted) | Space O(1).
-     * - Stability: STABLE.
-     * - Usage: Small arrays (N < 50), Streaming data.
+     *
+     * LOGIC:
+     * - Build the sorted array one item at a time.
+     * - Take the current element and "shift" it back into its correct position in the sorted part.
+     *
+     * VISUALIZATION:
+     * [5, 1, 4, 2] -> Take 1: Shift 5 right -> [1, 5, 4, 2]
+     * [1, 5, 4, 2] -> Take 4: Shift 5 right -> [1, 4, 5, 2]
+     *
+     * PROS: Very fast for nearly sorted arrays. Online (can sort as it receives data). Stable.
+     * CONS: Slow O(n^2) for random data.
+     *
+     * COMPLEXITY: Time O(n^2) avg/worst, O(n) best | Space O(1).
+     * STABILITY: Stable.
      */
     @Test
     fun insertionSort() {
@@ -90,12 +120,22 @@ class SortingAlgorithmsDeepDive {
     }
 
     /**
-     * ==========================================
      * 4. MERGE SORT (O(n log n))
-     * ==========================================
-     * - Complexity: Time O(n log n) | Space O(n).
-     * - Stability: STABLE.
-     * - Usage: Linked Lists, External Sorting, Stable requirement.
+     *
+     * LOGIC:
+     * - Divide and Conquer: Split the array in half recursively.
+     * - Sort the halves.
+     * - Merge the two sorted halves back together.
+     *
+     * VISUALIZATION:
+     * Split: [3, 1, 4, 2] -> [3, 1], [4, 2] -> [3], [1], [4], [2]
+     * Merge: [1, 3], [2, 4] -> [1, 2, 3, 4]
+     *
+     * PROS: Guaranteed O(n log n) performance. Stable. Good for large data sets.
+     * CONS: Requires extra space O(n).
+     *
+     * COMPLEXITY: Time O(n log n) | Space O(n).
+     * STABILITY: Stable.
      */
     @Test
     fun mergeSortDemo() {
@@ -131,12 +171,21 @@ class SortingAlgorithmsDeepDive {
     }
 
     /**
-     * ==========================================
      * 5. QUICK SORT (O(n log n))
-     * ==========================================
-     * - Complexity: Time O(n log n) avg, O(n^2) worst | Space O(log n).
-     * - Stability: UNSTABLE (Partition logic).
-     * - Usage: General purpose (Arrays.sort primitive). Fastest in practice (Cache friendly).
+     *
+     * LOGIC:
+     * - Pick a 'pivot' element.
+     * - Partition: Rearrange elements so that those smaller than pivot are on the left, and larger on the right.
+     * - Recursively apply to the two partitions.
+     *
+     * VISUALIZATION:
+     * Pivot 5: [2, 1, 9, 8, 5] -> Partition -> [2, 1, 5, 8, 9] (5 is in correct spot)
+     *
+     * PROS: Very fast in practice (low constant factors, cache friendly). In-place.
+     * CONS: O(n^2) worst case if pivot selection is poor. Unstable.
+     *
+     * COMPLEXITY: Time O(n log n) average, O(n^2) worst | Space O(log n).
+     * STABILITY: Unstable.
      */
     @Test
     fun quickSortDemo() {
@@ -172,12 +221,18 @@ class SortingAlgorithmsDeepDive {
     }
 
     /**
-     * ==========================================
      * 6. COUNTING SORT (O(n + k))
-     * ==========================================
-     * - Complexity: Time O(N + K) | Space O(K).
-     * - Stability: STABLE (if iterating backwards).
-     * - Usage: Small integer range (e.g., Ages 0-100).
+     *
+     * LOGIC:
+     * - Non-comparative sorting.
+     * - Count the occurrences of each unique element.
+     * - Calculate the position of each element in the output array.
+     *
+     * PROS: O(n) performance (if k is small). Stable.
+     * CONS: Limited to integers in a known range. High space overhead if range is large.
+     *
+     * COMPLEXITY: Time O(N + K) | Space O(K) where K is range.
+     * STABILITY: Stable.
      */
     @Test
     fun countingSort() {
@@ -202,11 +257,20 @@ class SortingAlgorithmsDeepDive {
     }
 
     /**
-     * ==========================================
      * 7. CYCLIC SORT (O(n))
-     * ==========================================
-     * - Complexity: Time O(N) | Space O(1).
-     * - Usage: "Find Missing/Duplicate Number" in range 1..N.
+     *
+     * LOGIC:
+     * - Iterate through the array.
+     * - If the current element is not at its correct index (i.e., `arr[i] != i + 1`), swap it with the element at its correct index.
+     *
+     * VISUALIZATION:
+     * [3, 2, 1] -> 3 is at idx 0, should be at idx 2. Swap 3 and 1: [1, 2, 3]
+     *
+     * PROS: O(n) time, O(1) space. Perfect for finding missing/duplicate numbers in range 1..N.
+     * CONS: Only works for contiguous ranges of integers.
+     *
+     * COMPLEXITY: Time O(N) | Space O(1).
+     * STABILITY: Unstable (depends on implementation).
      */
     @Test
     fun cyclicSort() {

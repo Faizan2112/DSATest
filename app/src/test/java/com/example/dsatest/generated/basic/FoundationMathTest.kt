@@ -22,27 +22,38 @@ import kotlin.collections.iterator
 class FoundationMathTest {
 
     /**
-     * ==========================================
-     * TOPIC 1: BASIC MATH PATTERNS
-     * ==========================================
+     * 1. BASIC MATH PATTERNS
+     *
+     * DESIGN:
+     * - GCD: Euclidean Algorithm O(log(min(A,B))).
+     * - IS_PRIME: Trial Division O(sqrt(N)).
+     * - MODULO: For cycles and hashing.
      */
     @Test
     fun mathBasics() {
         println("=== MATH BASICS ===")
         
         // 1. Modulo Operator (%)
-        // "The Remainder". Crucial for cycles, even/odd, hashing.
         println("10 % 3 = ${10 % 3}") // 1
-        println("Is 7 odd? ${7 % 2 != 0}")
-
-        // 2. GCD (Greatest Common Divisor) - Euclidean Algorithm
-        // Essential for number theory problems.
+        
+        // 2. GCD (Euclidean)
         println("GCD(48, 18) = ${gcd(48, 18)}") // 6
 
-        // 3. Prime Checking
-        // A number is prime if it has no divisors other than 1 and itself.
-        println("Is 17 prime? ${isPrime(17)}")
-        println("Is 18 prime? ${isPrime(18)}")
+        // 3. Power (Binary Exponentiation O(log N))
+        println("2^10 = ${power(2.0, 10)}")
+    }
+
+    // O(log N) Power
+    fun power(base: Double, exp: Int): Double {
+        var a = base
+        var b = exp
+        var res = 1.0
+        while (b > 0) {
+            if (b % 2 == 1) res *= a
+            a *= a
+            b /= 2
+        }
+        return res
     }
 
     // Recursive GCD (Euclidean)

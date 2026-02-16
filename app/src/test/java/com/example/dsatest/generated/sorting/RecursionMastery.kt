@@ -20,10 +20,24 @@ import java.util.HashMap
 class RecursionMastery {
 
     /**
-     * ==========================================
      * 1. STANDARD RECURSION
-     * ==========================================
-     * Classic Factorial.
+     *
+     * PROBLEM:
+     * Calculate Factorial of N.
+     *
+     * DESIGN:
+     * Why Recursion?
+     * - Factorial(N) = N * Factorial(N-1).
+     * - This natural mathematical definition maps perfectly to recursive calls.
+     *
+     * DETAIL:
+     * 1. Base Case: If n <= 1, return 1.
+     * 2. Recursive Step: Return n * factorial(n - 1).
+     *
+     * COMPLEXITY:
+     * Time: O(N) - N calls.
+     * Space: O(N) - Stack depth N.
+     *
      * RISK: Stack Overflow if N is large (~10,000).
      */
     @Test
@@ -34,29 +48,34 @@ class RecursionMastery {
 
     fun factorial(n: Int): Int {
         if (n <= 1) return 1
-        return n * factorial(n - 1) // Stack builds up here
+        return n * factorial(n - 1)
     }
 
     /**
-     * ==========================================
      * 2. TAIL RECURSION (`tailrec`)
-     * ==========================================
-     * CHEATSHEET:
-     * - Concept: If the recursive call is the *last* operation, the compiler optimizes it into a loop.
-     * - Benefit: No Stack Overflow. Constant Space O(1).
-     * - How: Pass the "accumulated result" down as a parameter.
+     *
+     * DESIGN:
+     * Why Tail Call Optimization?
+     * - In standard recursion, the computer must "remember" to multiply by `n` *after* the recursive call returns. This uses stack space.
+     * - In tail recursion, the recursive call is the *very last* thing. The computer can reuse the same stack frame.
+     *
+     * DETAIL:
+     * 1. Use an `accumulator` to store the intermediate result.
+     * 2. Base Case: Return `accumulator`.
+     * 3. Recursive Step: `factorialTail(n - 1, n * accumulator)`.
+     *
+     * COMPLEXITY:
+     * Time: O(N)
+     * Space: O(1) - Kotlin compiler turns this into a loop!
      */
     @Test
     fun tailRecursion() {
         println("\n=== TAIL RECURSION ===")
-        // Can handle massive numbers without crashing
         println("FactorialTail(5): ${factorialTail(5)}") 
     }
 
-    // `tailrec` keyword ensures optimization
     tailrec fun factorialTail(n: Int, accumulator: Int = 1): Int {
         if (n <= 1) return accumulator
-        // The call is the ONLY thing returned. No multiplication *after* the call.
         return factorialTail(n - 1, n * accumulator)
     }
 
@@ -107,30 +126,40 @@ class RecursionMastery {
     }
 
     /**
-     * ==========================================
      * 4. MEMOIZATION (Top-Down Dynamic Programming)
-     * ==========================================
-     * PROBLEM: Fibonacci O(2^n) is too slow.
-     * SOL: Cache answers. O(n).
+     *
+     * PROBLEM:
+     * Fibonacci O(2^n) is too slow because it re-calculates the same branches.
+     *
+     * VISUALIZATION (Redundant Work):
+     *           fib(5)
+     *          /      \
+     *      fib(4)      fib(3)
+     *      /    \      /    \
+     *   fib(3) fib(2) fib(2) fib(1)
+     *     ^           ^
+     *     Both branches calculate fib(2)!
+     *
+     * DESIGN:
+     * Why Cache?
+     * - Store results in a Map so we only calculate each `n` once.
+     *
+     * COMPLEXITY:
+     * Time: O(N) - Each state is visited once.
+     * Space: O(N) - Cache + Stack.
      */
     @Test
     fun memoizationDemo() {
         println("\n=== MEMOIZATION (DP) ===")
-        // Clear cache
         memo.clear()
         println("Fib(10): ${fibMemo(10)}")
-        println("Cache hits occurred!")
     }
 
     val memo = HashMap<Int, Int>()
     
     fun fibMemo(n: Int): Int {
         if (n <= 1) return n
-        
-        // 1. Check Cache
         if (memo.containsKey(n)) return memo[n]!!
-        
-        // 2. Compute & Store
         val result = fibMemo(n - 1) + fibMemo(n - 2)
         memo[n] = result
         return result

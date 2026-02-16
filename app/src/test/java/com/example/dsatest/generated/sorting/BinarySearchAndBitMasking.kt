@@ -20,10 +20,25 @@ import org.junit.Test
 class BinarySearchAndBitMasking {
 
     /**
-     * ==========================================
      * 1. BINARY SEARCH (Standard)
-     * ==========================================
-     * REQUIREMENT: Input must be SORTED.
+     *
+     * PROBLEM:
+     * Find target in a SORTED array.
+     *
+     * DESIGN:
+     * Why Binary Search?
+     * - Instead of checking every index (Linear Search O(N)), we jump to the middle.
+     * - We eliminate HALF the search space in every step.
+     *
+     * DETAIL:
+     * 1. `left = 0`, `right = n-1`.
+     * 2. Loop `left <= right`:
+     *    - `mid = low + (high - low) / 2` (Safe from overflow).
+     *    - If `arr[mid] == target`, found!
+     *    - If `arr[mid] < target`, target is in right half: `left = mid + 1`.
+     *    - Else, target is in left half: `right = mid - 1`.
+     *
+     * COMPLEXITY: Time O(log N) | Space O(1).
      */
     @Test
     fun binarySearchStandard() {
@@ -36,7 +51,7 @@ class BinarySearchAndBitMasking {
         var ans = -1
         
         while (left <= right) {
-            val mid = left + (right - left) / 2 // Prevent overflow
+            val mid = left + (right - left) / 2
             if (arr[mid] == target) {
                 ans = mid
                 break
@@ -50,11 +65,18 @@ class BinarySearchAndBitMasking {
     }
 
     /**
-     * ==========================================
-     * 2. LOWER BOUND (First Occurrence / Insertion Point)
-     * ==========================================
-     * Returns index of first element >= target.
-     * Crucial for: "Insert position", "Count occurrences".
+     * 2. LOWER BOUND (First Occurrence)
+     *
+     * DESIGN:
+     * Why `right = mid`?
+     * - Even if we find the target at `mid`, there might be another one to the LEFT.
+     * - So we don't stop; we shrink the search space to `[left, mid]`.
+     *
+     * VISUALIZATION:
+     * [1, 2, 4, 4, 4, 6] (Target 4)
+     * Mid is 4 at idx 3. Move right to 3. Search [1, 2, 4, 4].
+     *
+     * COMPLEXITY: Time O(log N) | Space O(1).
      */
     @Test
     fun lowerBoundDemo() {
@@ -68,7 +90,7 @@ class BinarySearchAndBitMasking {
         while (left < right) {
             val mid = left + (right - left) / 2
             if (arr[mid] >= target) {
-                right = mid // Valid, but try to find someone to the left
+                right = mid 
             } else {
                 left = mid + 1
             }
