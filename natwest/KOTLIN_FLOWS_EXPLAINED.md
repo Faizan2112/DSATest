@@ -515,8 +515,36 @@ flow {
     }
 }
 .flowOn(Dispatchers.IO)
-.collect { updateScore(it) }
+
+---
+
+## 14. Lifecycle Hooks (The Punch Clock)
+
+**Analogy:** A Factory Worker's Shift.
+
+1.  **`onStart` (Punch In):** Do this **before** the work starts.
+    *   *Real World:* Put on safety gear.
+    *   *Code:* Show Loading Spinner.
+
+2.  **`onCompletion` (Punch Out):** Do this **after** the work ends (success or failure).
+    *   *Real World:* Wash hands, go home.
+    *   *Code:* Hide Loading Spinner.
+
+3.  **`onEach` (The Task):** Do this for **every item**.
+    *   *Real World:* Inspect every toy.
+    *   *Code:* Log the data.
+
+```kotlin
+flow {
+    emit("Work 1")
+    emit("Work 2")
+}
+.onStart { println("👷‍♂️ Start Shift (Show Loading)") }
+.onEach { println("🔨 Working on $it") }
+.onCompletion { println("👋 End Shift (Hide Loading)") }
+.collect()
 ```
+
 
 
 
