@@ -102,26 +102,31 @@ class RecursionMastery {
     @Test
     fun backtrackingDemo() {
         println("\n=== BACKTRACKING (Subsets) ===")
-        val nums = intArrayOf(1, 2)
+        val nums = intArrayOf(1, 2,6,9,5,12)
         val result = ArrayList<List<Int>>()
         
-        fun backtrack(index: Int, currentPath: ArrayList<Int>) {
+        fun backtrack(index: Int, currentPath: ArrayList<Int>,string: String) {
             // Base Case: We passed the last element
             if (index == nums.size) {
                 result.add(ArrayList(currentPath)) // Add copy
                 return
             }
-            
+           // println(string)
             // OPTION 1: Include nums[index]
             currentPath.add(nums[index]) // Choose
-            backtrack(index + 1, currentPath) // Explore
-            currentPath.removeAt(currentPath.size - 1) // Un-Choose (Backtrack)
-            
+          //  println("currentPath: $currentPath")
+            backtrack(index + 1, currentPath,"inside index + 1") // Explore
+         //  println("${index+1}"+" "+"${currentPath}")
+           currentPath.removeAt(currentPath.size - 1) // Un-Choose (Backtrack)
+
+            //println("currentPath: $currentPath")
             // OPTION 2: Don't include nums[index]
-            backtrack(index + 1, currentPath)
+            backtrack(index + 1, currentPath,"inside index - 1")
+
+            //println("${index+1}"+" "+"${currentPath}")
         }
         
-        backtrack(0, ArrayList())
+        backtrack(0, ArrayList(),"start backtracking")
         println("Subsets: $result")
     }
 

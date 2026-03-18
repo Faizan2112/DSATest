@@ -89,7 +89,7 @@ class ArrayProblemsEasy {
     @Test
     fun q2_bestTimeStock() {
         println("=== Q2: Best Time to Buy/Sell Stock ===")
-        val prices = intArrayOf(7, 1, 5, 3, 6, 4)
+        val prices = intArrayOf(7, 1, 5, 2, 10, 4)
         var minPrice = Int.MAX_VALUE
         var maxProfit = 0
         
@@ -157,7 +157,7 @@ class ArrayProblemsEasy {
     @Test
     fun q4_majorityElement() {
         println("=== Q4: Majority Element ===")
-        val nums = intArrayOf(2, 2, 1, 1, 1, 2, 2)
+        val nums = intArrayOf(2, 2, 3,1, 1,4, 1, 2, 2)
         var count = 0
         var candidate = 0
         
