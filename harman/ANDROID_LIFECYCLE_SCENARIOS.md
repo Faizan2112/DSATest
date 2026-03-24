@@ -132,3 +132,31 @@ Where do you save state when the user rotates the screen or the OS kills the app
 **Example of correct handling:**
 1.  **Rotation:** ViewModel holds the `List<Car>`. UI re-renders instantly.
 2.  **Process Death:** `SavedStateHandle` holds the `search_query` string. When app is relaunched, ViewModel reads `search_query` from the handle and performs the database query again.
+
+---
+
+## 7. Domain-Specific Lifecycle Scenarios 🏭
+
+### A. Digital Gold & FinTech 🥇
+**Q: A user is on the final "Confirm Purchase" screen for 10 grams of Digital Gold. A phone call comes in, pushing the app to `onStop()`, and then the OS kills the app due to low memory. How do you ensure the user doesn't lose their transaction state when they return?**
+**A:** Use **`SavedStateHandle`**. Store the `transactionId` or transaction payload bundle in the `SavedStateHandle` within the ViewModel. When the process is recreated, `onCreate()` will reconstruct the ViewModel with the `SavedStateHandle` intact, allowing you to instantly restore the "Confirm Purchase" UI state and verify the transaction limits again without forcing the user back to the home screen.
+
+### B. Insurance Claims 📄
+**Q: An insurance inspector is using the camera to capture a 360-video of a damaged vehicle. If they rotate the device to get a better angle, the Activity is destroyed. How do you handle the camera lifecycle to avoid interrupting the recording or leaking the camera hardware?**
+**A:** Standard configuration changes destroy the Activity. To prevent camera interruption:
+1. Declare `android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"` in the Manifest for this specific Activity.
+2. The Activity will NOT be destroyed; instead, `onConfigurationChanged()` is called.
+3. You manually adjust the UI layout/overlay within `onConfigurationChanged()` while the CameraX/Camera2 session remains completely uninterrupted because `onDestroy` and `onCreate` were bypassed.
+
+### C. BLE (Bluetooth Low Energy) Devices ⌚
+**Q: Your app acts as a dashboard for a BLE smart ring. The user backgrounds the app (`onStop()`). What is the correct lifecycle component to keep the BLE connection alive and where do you start it?**
+**A:** You must transition the BLE management out of the Activity/ViewModel and into a **Foreground Service** (`connectedDevice` type). 
+- Start the Foreground Service or bind to it during `onStart()` or `onCreate()`.
+- When the Activity reaches `onStop()`, the UI unbinds or stops listening, but the Service remains alive independently, maintaining the GATT connection and caching data in a Room database until the Activity returns to `onStart()`.
+
+### D. Telemedicine & Healthcare 🩺
+**Q: A doctor is in a WebRTC video consultation. They receive a critical text message and swipe down the notification shade or briefly open a reply bubble. Does the WebRTC video pause? What lifecycle callbacks fire?**
+**A:** When a system overlay or notification shade obscures the screen, or the app goes into multi-window/split-screen (but is still visible):
+- **`onPause()` fires.** 
+- **`onStop()` DOES NOT fire** (the Activity is still partially visible).
+- **Rule:** Do NOT pause the WebRTC video or camera preview in `onPause()`. In multi-window mode, users expect the video to continue playing. Only release the camera hardware and pause the video stream when the app hits **`onStop()`** (when it becomes entirely invisible).

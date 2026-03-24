@@ -115,3 +115,35 @@ If asked: "What security measures do you implement?", guide the answer through t
 2.  *"I implement **Certificate Pinning**, but I pin intermediate CAs with backups to avoid apps bricking themselves when DevOps rotates certificates."*
 3.  *"I integrate the **Play Integrity API** for anti-tampering, recognizing it adds network latency and fails on non-GMS devices (like some AAOS head units)."*
 4.  *"I secure **AIDL bounds services** by strictly checking `Binder.getCallingUid()` to prevent Confused Deputy attacks from malicious apps installed on the head unit."*
+
+---
+
+## 7. Domain-Specific Security Scenarios 🏭
+
+### A. Digital Gold & FinTech 🥇
+**Q: A user's device is physically stolen while unlocked. How do you prevent the thief from transferring out all the user's Digital Gold?**
+**A:** Enforce **Transaction-Level Biometric Authentication**. Do not simply rely on the app being "logged in."
+1. When generating the RSA/EC signing key in the Android Keystore during login, use `setUserAuthenticationRequired(true)` and `setUserAuthenticationValidityDurationSeconds(-1)`.
+2. This forces the Keystore to lock the transaction-signing key immediately after every use.
+3. Every time the user presses "Transfer," you MUST present the `BiometricPrompt`. Only a successful scan will temporarily unlock the Keystore hardware, sign the transfer payload, and send it to the backend. The unlocked session does not persist.
+
+### B. Insurance Claims 📄
+**Q: An insurance app allows users to upload photos of car damage. How do you cryptographically prove to the backend that a photo was taken natively by the device camera right now, and not altered in Photoshop or downloaded from the internet?**
+**A:** Use **Hardware-Backed Keystore Attestation & Scoped Storage**.
+1. When the app takes the photo via CameraX, immediately sign the image hash (SHA-256) using a hardware-backed EC Key. 
+2. Attach the generated Key Attestation Certificate chain (which proves the key actually resides in the Titan M chip and device is not rooted) to the upload payload.
+3. The backend verifies the signature and the certificate chain. This guarantees the image hash was generated securely on a non-tampered device at the exact timestamp of the claim.
+
+### C. BLE (Bluetooth Low Energy) Devices ⌚
+**Q: Your app syncs proprietary data with a medical BLE band. A hacker runs a Bluetooth sniffer app on the same phone. How do you prevent them from intercepting the BLE GATT characteristics?**
+**A:** Standard BLE pairing is easily intercepted by the Android OS or other apps with `BLUETOOTH_CONNECT` permissions.
+1. Implement **Application-Layer Encryption (E2EE)**.
+2. The BLE band and the App perform a Diffie-Hellman Key Exchange (e.g., ECDH) *over* the standard BLE connection upon first pairing. 
+3. All subsequent GATT characteristic reads/writes consist of AES-GCM encrypted byte arrays. Even if a sniffer intercepts the BLE packets, they only see AES-encrypted garbage without the Session Key.
+
+### D. Telemedicine & Healthcare 🩺
+**Q: A telemedicine app stores downloaded PDF medical prescriptions on the device for offline viewing. How do you secure them so no other file manager app or malicious app can steal the PDFs?**
+**A:** Never write medical data to external/shared storage (`Downloads/` or `Documents/`), even if it is a standard PDF.
+1. Write the PDFs strictly to **Internal App-Specific Storage** (`context.filesDir`). Linux file permissions isolate this directory, making it impossible for other apps to read it on a non-rooted device.
+2. If the user explicitly wants to save the PDF to their public `Downloads` folder, force them to invoke the **Storage Access Framework (SAF)** via an `Intent.ACTION_CREATE_DOCUMENT`. This clearly shifts the security responsibility to the user's explicit action and requires interaction with the system UI picker.
+3. For extreme HIPAA compliance, encrypt the PDF bytes via `EncryptedFile` (Jetpack Security) before writing it to `context.filesDir`, ensuring it's unreadable even via physical memory extraction on a rooted device.

@@ -275,3 +275,42 @@ Mobile devices aggressively kill background apps, but vehicles work slightly dif
 | "Exact 8 AM task?" | AlarmManager |
 | "App A reads vehicle data from App B?" | **Bound Service + AIDL** |
 | "Multiple apps need vehicle data?" | **AIDL + RemoteCallbackList** |
+
+---
+
+## 9. Domain-Specific Background Scenarios 🏭
+
+### A. Digital Gold & FinTech 🥇
+**Q: How do you handle live gold price polling while the user is on the trading dashboard, and stop it when they leave?**
+**A:** Use **Coroutines with `repeatOnLifecycle` or `flowWithLifecycle`** in the ViewModel. It automatically starts polling when the UI is visible and cancels when it's hidden. Do NOT use WorkManager or Services for UI-bound polling.
+
+**Q: A user purchases digital gold. You need to verify the transaction status with the backend even if they immediately kill the app. How?**
+**A:** Use **WorkManager (`OneTimeWorkRequest`)**. Enqueue a worker to poll the transaction status. If the app is killed, WorkManager guarantees the verification will still execute, and you can show a local Notification upon success/failure.
+
+### B. Insurance Claims 📄
+**Q: The user is uploading 15 high-res photos of a car accident. How do you ensure this succeeds on a spotty cellular connection?**
+**A:** Use **WorkManager with `NetworkType.CONNECTED` constraints**.
+1. Save photos locally first (Room/Storage).
+2. Enqueue a `OneTimeWorkRequest` or a chain (`beginWith(compressWorker).then(uploadWorker)`).
+3. If the network drops, WorkManager automatically pauses and resumes.
+4. For Android 12+, use **Expedited Jobs** or a **Foreground Service (`dataSync` type)** if the upload is user-initiated and they expect progress.
+
+**Q: An insurance telematics app needs to track the user's driving behavior (speed, harsh braking) in the background.**
+**A:** Use a **Foreground Service (`location` type)**. Active continuous tracking requires the user's awareness. In modern Android, you must explicitly declare the foreground service type as `location` and request background location permissions.
+
+### C. BLE (Bluetooth Low Energy) Devices ⌚
+**Q: A user connects a BLE smart ring. How do you keep the connection alive in the background to sync step counts periodically?**
+**A:** Use a **Foreground Service (`connectedDevice` type)**. Modern Android kills background GATT connections quickly. A `connectedDevice` foreground service guarantees the process stays alive to maintain the BLE socket.
+
+**Q: Need to scan for a specific BLE medical device nearby and wake up the app when found, even if it's dead.**
+**A:** Use **`PendingIntent` with `BluetoothLeScanner`**. Register for background scanning. When the specific MAC/UUID is found, OS fires the `PendingIntent`, waking your `BroadcastReceiver` or `Service`, from which you can trigger a notification or WorkManager job.
+
+### D. Telemedicine & Healthcare 🩺
+**Q: How do you implement the ringing screen for an incoming doctor's video call when the app is in the background?**
+**A:** Use **FCM (Firebase Cloud Messaging) High Priority Data Messages** combined with a **Foreground Service (`phoneCall` type)** or **Telecom Manager**. 
+When the FCM arrives:
+1. Trigger a Full-Screen Intent Notification.
+2. Start a Foreground Service to play the ringtone and handle the WebRTC connection.
+
+**Q: Doctors need to sync patient EMR (Electronic Medical Records) data securely every night at 2 AM for offline access.**
+**A:** Use **WorkManager (`PeriodicWorkRequest`)**. Set constraints: `REQUIRES_CHARGING`, `REQUIRES_DEVICE_IDLE`, and `UNMETERED` (Wi-Fi). This ensures massive data syncs don't drain the battery or mobile data during the day.

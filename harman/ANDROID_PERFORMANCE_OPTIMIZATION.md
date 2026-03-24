@@ -114,3 +114,34 @@ If the interviewer asks: **"How do you profile and optimize an app's performance
 2.  **Memory Footprint:** "I trade CPU for RAM where appropriate. If I have a dictionary of 500 vehicle sensor mappings, I use `ArrayMap` instead of `HashMap`. For heavy media (album art), I configure Coil to decode using `RGB_565` to instantly cut RAM consumption by 50% because transparency isn't needed."
 3.  **Battery & Network:** "I avoid keeping the cellular radio active by batching telemetry logs into Room, and syncing them via heavily constrained **WorkManager** jobs (e.g., waiting for unmetered Wi-Fi or when the vehicle enters Garage Mode)."
 4.  **UI Jank (Dropped Frames):** "I use the **Android Studio Profiler (Systrace)** to identify garbage collection pauses. I strictly avoid instantiating heavy objects, like `Paint` or `Path`, inside tight loops like `onDraw` or Compose Canvas phases, moving those allocations to pre-computed class properties."
+
+---
+
+## 6. Domain-Specific Performance Scenarios 🏭
+
+### A. Digital Gold & FinTech 🥇
+**Q: A live-trading dashboard displays updating gold prices and the user's portfolio graph (canvas). It stutters heavily when scrolling. How do you optimize it?**
+**A:** Live graphs are often redrawn 60 times a second. 
+1. **Never allocate objects in `onDraw()`** (or Compose `Canvas { }` phases). Pre-allocate `Paint`, `Path`, and color objects at the class/state level. 
+2. Use a **`StateFlow` with `conflate()`** for the live price ticker to drop intermediate websocket ticks that arrive faster than the UI can draw them.
+3. Use **Recycler View / LazyColumn** efficiently by implementing `DiffUtil` or stable Compose keys to prevent rebinding entire lists when only one asset price changes.
+
+### B. Insurance Claims 📄
+**Q: An inspector takes 30 high-resolution photos of a crash. When they click "Submit", the app OOMs (Out Of Memory) instantly.**
+**A:** A single 12MP camera image takes ~48MB of raw RGB RAM. Putting 30 in memory simultaneously guarantees an OOM.
+1. **Never load full images into memory simultaneously.** Process pictures sequentially using WorkManager or Coroutines.
+2. Calculate `inSampleSize` to aggressively downsample the raw byte array into a smaller Bitmap *before* decoding. 
+3. Instantly write the compressed JPEG/WebP to a local `File` on the disk, and let the GC clear the Bitmap before loading the next photo.
+
+### C. BLE (Bluetooth Low Energy) Devices ⌚
+**Q: A health app maintains a continuous BLE connection to a smart ring, but the user complains the app drains 20% of their phone battery overnight. Why, and how do you fix it?**
+**A:** The BLE radio is likely being kept active unnecessarily or waking the CPU constantly.
+1. Avoid continuous 100Hz polling if it's not needed. Switch the BLE characteristics to **Notifications/Indications** instead of constant Reads.
+2. If raw data must be logged overnight, batch the data on the BLE device itself (if hardware supports it) and sync once an hour.
+3. Avoid CPU WakeLocks. If the ring streams data, process it, dump it to `Room`, and let the CPU sleep. 
+
+### D. Telemedicine & Healthcare 🩺
+**Q: A telemedicine app experiences severe audio/video latency and thermal throttling heavily during a 45-minute WebRTC call on a mid-range device.**
+**A:** Video encoding/decoding is incredibly CPU intensive.
+1. Use **Hardware Acceleration**. Ensure WebRTC is strictly configured to use Hardware Video Codecs (like `HardwareVideoEncoderFactory` in Android) rather than falling back to software codecs (which burn CPU and battery).
+2. Monitor `PowerManager.onThermalStatusChanged`. If the device hits `THERMAL_STATUS_SEVERE`, automatically gracefully degrade the target video bitrate, drop the framerate from 30fps to 15fps, or turn off the user's camera to cool the device and save the call.

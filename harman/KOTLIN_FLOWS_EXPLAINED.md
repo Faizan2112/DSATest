@@ -413,3 +413,53 @@ flow {
 .flowOn(Dispatchers.IO)
 .catch { emit(OtaStatus.CheckFailed) }
 ```
+
+---
+
+## 15. Domain-Specific Flow Scenarios 🏭
+
+### A. Digital Gold & FinTech 🥇
+**Q: How do you handle live-streaming gold prices while ensuring that if the user temporarily tabs out, we don't hold multiple heavy socket connections, but instantly resume when they return?**
+**A:** Use **`StateFlow` with `SharingStarted.WhileSubscribed(5000)`**. 
+1. Convert the websocket price stream to a Flow using `callbackFlow`.
+2. Apply `.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), InitialPrice)`.
+3. The 5-second grace period handles configuration changes (like screen rotation) without dropping the websocket. If the app stays in the background longer, the upstream Flow is cancelled (closing the socket) to save battery and data.
+
+### B. Insurance Claims 📄
+**Q: The user is uploading 15 high-res photos. We want to show the overall progress percentage on the UI. How do you implement this cleanly?**
+**A:** Use **`combine` or `.scan()`** on a Flow of individual upload progresses.
+```kotlin
+// Example using scan to accumulate total progress bytes
+val totalProgressFlow = uploadWorkerFlow
+    .scan(0L) { accumulatedBytes, newBytes -> accumulatedBytes + newBytes }
+    .map { totalBytes -> (totalBytes.toFloat() / totalExpectedBytes) * 100 }
+```
+Alternatively, combine the `StateFlow`s of each individual photo upload worker to constantly emit the total completed ratio.
+
+### C. BLE (Bluetooth Low Energy) Devices ⌚
+**Q: You are receiving rapid raw accelerometer data at 100Hz from a BLE smart ring, but the UI chart only needs updating at 10Hz to remain smooth without dropping frames. Which operator do you use?**
+**A:** Use **`conflate()`** or **`sample(100.milliseconds)`**. 
+- `conflate()` processes the latest value whenever the UI is ready to draw, dropping intermediate values.
+- `sample(100L)` takes exactly one reading every 100ms, which is perfect for steady UI chart rendering.
+
+**Q: Handling BLE disconnections often throws exceptions globally. How do you construct a BLE `callbackFlow` resilient to drops?**
+**A:** Use `.catch`, `.retryWhen`, and cleanly close the `awaitClose` block.
+```kotlin
+bleDataFlow
+    .retryWhen { cause, attempt -> 
+        cause is BleDisconnectedException && attempt < 3
+    }
+    .catch { emit(BleState.Disconnected) }
+```
+
+### D. Telemedicine & Healthcare 🩺
+**Q: A doctor is typing a patient's medical symptom into a search bar. We need to fetch ICD-10 medical codes from an API, but avoid spamming the backend on every keystroke, and cancel previous searches if the doctor types faster.**
+**A:** Use a chain of **`debounce`**, **`distinctUntilChanged`**, and **`flatMapLatest`**.
+```kotlin
+symptomSearchQuery
+    .debounce(400) // Wait 400ms for doctor to finish typing burst
+    .distinctUntilChanged() // Don't search again if query is identical
+    .flatMapLatest { query -> medicalApi.getIcd10Codes(query) }
+    .catch { emit(emptyList()) }
+```
+**`flatMapLatest`** is crucial here because if the API is slow, a newer keystroke will cancel the previous ongoing network request.
